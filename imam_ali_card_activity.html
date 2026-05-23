@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reflecting on Imam Ali's Advice</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#fdf8f0;--gold:#c8960a;--gold-dark:#8B6914;
+  --text:#1a1209;--muted:#7a6a52;--border:rgba(139,105,20,0.2);
+  --card-bg:#fffcf7;
+  --serif:Georgia,'Times New Roman',serif;
+  --sans:'Segoe UI',system-ui,sans-serif;
+}
+html{font-size:16px;background:var(--cream)}
+body{font-family:var(--sans);color:var(--text);min-height:100vh;
+  background:
+    radial-gradient(ellipse 70% 40% at 8% 18%,rgba(180,210,185,0.28) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 92% 82%,rgba(240,185,165,0.30) 0%,transparent 60%),
+    var(--cream);
+}
+
+/* HEADER */
+.header{text-align:center;padding:2.5rem 1.5rem 1.5rem;max-width:700px;margin:0 auto}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:.6rem}
+.header h1{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:normal;line-height:1.2;margin-bottom:.6rem}
+.header p{font-size:14.5px;color:var(--muted);line-height:1.7;max-width:500px;margin:0 auto}
+
+/* STEPS */
+.steps{display:flex;align-items:center;justify-content:center;margin:1.5rem auto .3rem;max-width:320px}
+.sdot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border);background:var(--card-bg);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);
+  flex-shrink:0;transition:all .3s;z-index:1}
+.sdot.active{background:var(--gold);border-color:var(--gold);color:#fff}
+.sdot.done{background:var(--gold-dark);border-color:var(--gold-dark);color:#fff}
+.sline{flex:1;height:1px;background:var(--border)}
+.slabels{display:flex;justify-content:space-between;max-width:360px;margin:.3rem auto 0;padding:0 4px}
+.slabel{font-size:11px;color:var(--muted);text-align:center;width:90px;transition:color .3s}
+.slabel.active{color:var(--gold-dark);font-weight:600}
+
+/* MAIN */
+.main{max-width:860px;margin:0 auto;padding:0 1.25rem 4rem}
+.step{display:none}.step.show{display:block}
+.step-title{font-family:var(--serif);font-size:1.4rem;font-weight:normal;text-align:center;margin-bottom:.3rem}
+.step-sub{text-align:center;font-size:13.5px;color:var(--muted);margin-bottom:1.75rem;line-height:1.6}
+
+/* STEP 1 */
+.quotes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.qcard{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;
+  padding:1.4rem 1.2rem 1.1rem;cursor:pointer;position:relative;
+  transition:transform .18s,box-shadow .18s,border-color .18s}
+.qcard:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(139,105,20,.10);border-color:rgba(200,150,10,.35)}
+.qcard.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,150,10,.15);background:#fffdf4}
+.qcard.sel::after{content:'✓';position:absolute;top:10px;right:12px;width:22px;height:22px;
+  background:var(--gold);color:#fff;border-radius:50%;font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center}
+.qnum{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:.6rem;opacity:.7}
+.qtext{font-family:var(--serif);font-size:1.1rem;font-style:italic;line-height:1.55;color:var(--text)}
+.qsrc{font-size:11px;color:var(--muted);margin-top:.8rem}
+
+/* STEP 2 */
+.quote-box{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;
+  padding:1.4rem 1.6rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.quote-box::before{content:'\201C';position:absolute;top:-6px;left:12px;
+  font-family:var(--serif);font-size:5rem;line-height:1;color:var(--gold);opacity:.15;pointer-events:none}
+.quote-box p{font-family:var(--serif);font-size:1.2rem;font-style:italic;line-height:1.6;color:var(--text);position:relative;z-index:1}
+.quote-box .src{font-size:11px;color:var(--muted);margin-top:.5rem}
+.hint{background:rgba(200,150,10,.08);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;
+  padding:9px 13px;font-size:13px;color:var(--muted);margin-bottom:1.2rem;line-height:1.6}
+.flabel{display:block;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.finput{width:100%;padding:10px 13px;font-size:15px;font-family:var(--sans);
+  border:1px solid var(--border);border-radius:9px;background:var(--card-bg);
+  color:var(--text);margin-bottom:1rem;outline:none;transition:border-color .2s}
+.finput:focus{border-color:var(--gold)}
+.ftarea{width:100%;min-height:110px;padding:11px 13px;font-size:15px;
+  font-family:var(--serif);font-style:italic;line-height:1.6;
+  border:1px solid var(--border);border-radius:9px;background:var(--card-bg);
+  color:var(--text);resize:vertical;outline:none;transition:border-color .2s}
+.ftarea:focus{border-color:var(--gold)}
+.ccount{font-size:11px;color:var(--muted);text-align:right;margin-top:3px}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;margin-top:1.4rem;align-items:center;flex-wrap:wrap}
+.btn{padding:11px 26px;font-size:14px;font-weight:600;border-radius:40px;cursor:pointer;transition:all .2s;font-family:var(--sans)}
+.btn-primary{background:var(--gold-dark);color:#fff;border:none}
+.btn-primary:hover{background:#5a3a07;transform:scale(1.02)}
+.btn-primary:disabled{background:#c5b89a;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--gold-dark);color:var(--gold-dark)}
+.btn-center{display:block;margin:1.75rem auto 0}
+.btn-ghost{background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;display:block;margin:1.2rem auto 0}
+.btn-ghost:hover{color:var(--text)}
+
+/* ── THE CARD (single face) ── */
+.card-wrap{max-width:620px;margin:0 auto 1.25rem}
+
+.wallet-card{
+  width:100%;
+  aspect-ratio:1300/920;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(200,160,40,.35);
+  box-shadow:0 6px 32px rgba(0,0,0,.09);
+  position:relative;
+  background:#fdf8f0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:5% 9% 5%;
+}
+/* watercolour blobs */
+.wallet-card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 38% at 38% 52%,rgba(245,195,165,.38) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 32% at 68% 58%,rgba(240,205,130,.28) 0%,transparent 65%),
+    radial-gradient(ellipse 48% 34% at 18% 42%,rgba(185,218,195,.26) 0%,transparent 65%);
+}
+
+/* rose top-left */
+.card-rose{position:absolute;top:0;left:0;width:clamp(55px,13%,100px);z-index:2;pointer-events:none}
+/* leaves bottom-right */
+.card-leaves{position:absolute;bottom:0;right:0;width:clamp(45px,11%,85px);z-index:2;pointer-events:none}
+
+/* attribution */
+.card-attr{position:absolute;top:5%;right:5%;
+  font-family:var(--serif);font-size:clamp(8px,1.4vw,13px);
+  color:#4a3a20;text-align:right;z-index:2;line-height:1.35}
+
+/* quote */
+.card-quote{
+  font-family:var(--serif);font-style:italic;font-weight:500;
+  font-size:clamp(12px,2.6vw,22px);
+  line-height:1.55;text-align:center;
+  color:#1a1209;
+  position:relative;z-index:2;
+  max-width:90%;
+}
+
+/* divider */
+.card-divider{
+  width:40%;height:1px;
+  background:linear-gradient(to right,transparent,rgba(200,150,10,.5),transparent);
+  margin:3% 0 2.5%;
+  position:relative;z-index:2;
+  flex-shrink:0;
+}
+
+/* reflection block */
+.card-reflection{
+  position:relative;z-index:2;
+  text-align:center;
+  max-width:88%;
+  display:flex;flex-direction:column;align-items:center;gap:1.5%;
+}
+.card-refl-name{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(9px,1.6vw,14px);
+  color:var(--gold-dark);
+  letter-spacing:.03em;
+  margin-bottom:1%;
+}
+.card-refl-text{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(10px,1.9vw,16px);
+  line-height:1.55;
+  color:#3a2e1a;
+  text-align:center;
+}
+
+/* DOWNLOAD / PRINT */
+.dl-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.status{text-align:center;font-size:13px;color:var(--gold-dark);min-height:18px;margin-top:6px;font-weight:600}
+.print-hint{text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
+
+/* ── PRINT ── */
+@media print{
+  body>*{display:none!important}
+  #printArea{display:block!important}
+  @page{size:A5 landscape;margin:8mm}
+}
+#printArea{display:none}
+.p-card{
+  width:100%;height:100vh;
+  border-radius:6mm;border:1px solid #d4b86a;
+  position:relative;overflow:hidden;
+  background:#fdf8f0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:8mm 12mm;
+}
+.p-card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 38% at 38% 52%,rgba(245,195,165,.38) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 32% at 68% 58%,rgba(240,205,130,.28) 0%,transparent 65%),
+    radial-gradient(ellipse 48% 34% at 18% 42%,rgba(185,218,195,.26) 0%,transparent 65%);
+}
+.p-rose{position:absolute;top:0;left:0;width:28mm;z-index:2}
+.p-leaves{position:absolute;bottom:0;right:0;width:22mm;z-index:2}
+.p-attr{position:absolute;top:5mm;right:6mm;font-family:Georgia,serif;font-size:8pt;color:#4a3a20;text-align:right;z-index:2;line-height:1.35}
+.p-quote{font-family:Georgia,serif;font-style:italic;font-size:14pt;line-height:1.55;text-align:center;color:#1a1209;position:relative;z-index:2;max-width:88%;margin-bottom:0}
+.p-divider{width:40%;height:1pt;background:rgba(200,150,10,.5);margin:4mm 0 3mm;position:relative;z-index:2}
+.p-refl-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#8B6914;margin-bottom:1.5mm;position:relative;z-index:2}
+.p-refl-text{font-family:Georgia,serif;font-style:italic;font-size:11pt;line-height:1.55;text-align:center;color:#3a2e1a;position:relative;z-index:2;max-width:85%}
+</style>
+</head>
+<body>
+
+<div class="header no-print">
+  <div class="eyebrow">STEP Corner Activity</div>
+  <h1>Reflecting on Imam Ali's Advice</h1>
+  <p>Choose a saying that speaks to your heart, write your personal reflection, and save your card.</p>
+  <div class="steps">
+    <div class="sdot active" id="dot1">1</div><div class="sline"></div>
+    <div class="sdot" id="dot2">2</div><div class="sline"></div>
+    <div class="sdot" id="dot3">3</div>
+  </div>
+  <div class="slabels">
+    <span class="slabel active" id="lbl1">Choose saying</span>
+    <span class="slabel" id="lbl2">Reflect</span>
+    <span class="slabel" id="lbl3">Your card</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- STEP 1 -->
+  <div class="step show" id="step1">
+    <p class="step-title">Which saying speaks to your heart?</p>
+    <p class="step-sub">Read each one slowly. Choose the one that resonates most deeply with you.</p>
+    <div class="quotes-grid">
+      <div class="qcard" onclick="pick(0)" id="q0">
+        <div class="qnum">Saying 01</div>
+        <div class="qtext">"Behave towards your brother (in faith) in such a way that… when he turns away, be kind to him and draw near to him"</div>
+        <div class="qsrc">Imam Ali's letter to Hazrat Hasan</div>
+      </div>
+      <div class="qcard" onclick="pick(1)" id="q1">
+        <div class="qnum">Saying 02</div>
+        <div class="qtext">"Do good to others as you would like good to be done to you"</div>
+        <div class="qsrc">Imam Ali's letter to Hazrat Hasan</div>
+      </div>
+      <div class="qcard" onclick="pick(2)" id="q2">
+        <div class="qnum">Saying 03</div>
+        <div class="qtext">"Behave towards your brother (in faith) in such a way that if he neglects the relation, you keep to it"</div>
+        <div class="qsrc">Imam Ali's letter to Hazrat Hasan</div>
+      </div>
+      <div class="qcard" onclick="pick(3)" id="q3">
+        <div class="qnum">Saying 04</div>
+        <div class="qtext">"You should wish for others what you wish for yourself and hate for others what you hate for yourself…"</div>
+        <div class="qsrc">Imam Ali's letter to Hazrat Hasan</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-center" id="btnS1" disabled onclick="goStep(2)">Continue to my reflection →</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="step2">
+    <p class="step-title">Your personal reflection</p>
+    <p class="step-sub">Sit with this saying. Then write one way you will carry it into your life.</p>
+    <div class="quote-box">
+      <p id="dispQuote"></p>
+      <div class="src">Imam Ali's letter to Hazrat Hasan</div>
+    </div>
+    <div class="hint">💬 Think of one specific way to apply this — with a family member, friend, or someone you find difficult.</div>
+    <label class="flabel">Your name</label>
+    <input class="finput" type="text" id="nameIn" placeholder="e.g. Zainab"/>
+    <label class="flabel">My commitment — how I will apply this in my life</label>
+    <textarea class="ftarea" id="reflIn" oninput="onRefl()" placeholder="e.g. I will stay patient and kind with my sister even when she is distant, and I will always be the one to reach out first…"></textarea>
+    <div class="ccount"><span id="cc">0</span> characters</div>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-primary" id="btnS2" disabled onclick="goStep(3)">Generate my card →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="step3">
+    <p class="step-title">Your personalised card</p>
+    <p class="step-sub">Save it to your phone or print it — keep it where you can see it every day.</p>
+
+    <div class="card-wrap">
+      <div class="wallet-card" id="theCard">
+
+        <!-- Rose SVG top-left -->
+        <div class="card-rose">
+          <svg viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <g transform="translate(52,62)">
+              <ellipse cx="26" cy="2" rx="8" ry="20" fill="#7a6840" opacity=".52" transform="rotate(-28)"/>
+              <ellipse cx="-24" cy="5" rx="7" ry="18" fill="#7a6840" opacity=".48" transform="rotate(18)"/>
+              <ellipse cx="5" cy="28" rx="7" ry="16" fill="#7a6840" opacity=".44" transform="rotate(4)"/>
+              <ellipse cx="0" cy="-33" rx="19" ry="39" fill="#eaaa1a" opacity=".82"/>
+              <ellipse cx="31" cy="-10" rx="19" ry="39" fill="#dfa020" opacity=".76" transform="rotate(72)"/>
+              <ellipse cx="19" cy="29" rx="19" ry="39" fill="#eaaa1a" opacity=".72" transform="rotate(144)"/>
+              <ellipse cx="-19" cy="29" rx="19" ry="39" fill="#d49818" opacity=".76" transform="rotate(216)"/>
+              <ellipse cx="-31" cy="-10" rx="19" ry="39" fill="#e2aa22" opacity=".79" transform="rotate(288)"/>
+              <ellipse cx="0" cy="-17" rx="11" ry="23" fill="#f0b830" opacity=".70" transform="rotate(36)"/>
+              <ellipse cx="16" cy="-6" rx="11" ry="23" fill="#e8aa28" opacity=".68" transform="rotate(108)"/>
+              <ellipse cx="10" cy="15" rx="11" ry="23" fill="#f0b830" opacity=".65" transform="rotate(180)"/>
+              <ellipse cx="-10" cy="15" rx="11" ry="23" fill="#e8a820" opacity=".68" transform="rotate(252)"/>
+              <ellipse cx="-16" cy="-6" rx="11" ry="23" fill="#f0b830" opacity=".70" transform="rotate(324)"/>
+              <circle cx="0" cy="0" r="10" fill="#b8820a"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Leaves SVG bottom-right -->
+        <div class="card-leaves">
+          <svg viewBox="0 0 90 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <ellipse cx="30" cy="68" rx="11" ry="33" fill="#8B7355" opacity=".54" transform="rotate(-14,30,68)"/>
+            <ellipse cx="54" cy="54" rx="10" ry="27" fill="#8B7355" opacity=".47" transform="rotate(11,54,54)"/>
+            <ellipse cx="20" cy="44" rx="8" ry="23" fill="#8B7355" opacity=".40" transform="rotate(-28,20,44)"/>
+          </svg>
+        </div>
+
+        <!-- Attribution -->
+        <div class="card-attr">Imam Ali's letter to<br>Hazrat Hasan</div>
+
+        <!-- Quote -->
+        <div class="card-quote" id="cardQuote"></div>
+
+        <!-- Divider -->
+        <div class="card-divider"></div>
+
+        <!-- Reflection (name + text) -->
+        <div class="card-reflection">
+          <div class="card-refl-name" id="cardName"></div>
+          <div class="card-refl-text" id="cardRefl"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="dl-row">
+      <button class="btn btn-primary" onclick="printCard()">🖨 Save / Print as PDF</button>
+    </div>
+    <p class="print-hint">In print dialog → <strong>Save as PDF</strong> → uncheck "Headers &amp; footers"</p>
+    <div class="status" id="statusMsg"></div>
+    <button class="btn-ghost" onclick="restart()">Start again for a new card</button>
+  </div>
+
+</div>
+
+<!-- PRINT AREA -->
+<div id="printArea">
+  <div class="p-card">
+    <div class="p-rose">
+      <svg viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <g transform="translate(52,62)">
+          <ellipse cx="26" cy="2" rx="8" ry="20" fill="#7a6840" opacity=".52" transform="rotate(-28)"/>
+          <ellipse cx="-24" cy="5" rx="7" ry="18" fill="#7a6840" opacity=".48" transform="rotate(18)"/>
+          <ellipse cx="0" cy="-33" rx="19" ry="39" fill="#eaaa1a" opacity=".82"/>
+          <ellipse cx="31" cy="-10" rx="19" ry="39" fill="#dfa020" opacity=".76" transform="rotate(72)"/>
+          <ellipse cx="19" cy="29" rx="19" ry="39" fill="#eaaa1a" opacity=".72" transform="rotate(144)"/>
+          <ellipse cx="-19" cy="29" rx="19" ry="39" fill="#d49818" opacity=".76" transform="rotate(216)"/>
+          <ellipse cx="-31" cy="-10" rx="19" ry="39" fill="#e2aa22" opacity=".79" transform="rotate(288)"/>
+          <circle cx="0" cy="0" r="10" fill="#b8820a"/>
+        </g>
+      </svg>
+    </div>
+    <div class="p-leaves">
+      <svg viewBox="0 0 90 100" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <ellipse cx="30" cy="68" rx="11" ry="33" fill="#8B7355" opacity=".54" transform="rotate(-14,30,68)"/>
+        <ellipse cx="54" cy="54" rx="10" ry="27" fill="#8B7355" opacity=".47" transform="rotate(11,54,54)"/>
+      </svg>
+    </div>
+    <div class="p-attr">Imam Ali's letter to<br>Hazrat Hasan</div>
+    <p class="p-quote" id="pQuote"></p>
+    <div class="p-divider"></div>
+    <div class="p-refl-name" id="pName"></div>
+    <p class="p-refl-text" id="pRefl"></p>
+  </div>
+</div>
+
+<script>
+const QUOTES=[
+  "Behave towards your brother (in faith) in such a way that… when he turns away, be kind to him and draw near to him",
+  "Do good to others as you would like good to be done to you",
+  "Behave towards your brother (in faith) in such a way that if he neglects the relation, you keep to it",
+  "You should wish for others what you wish for yourself and hate for others what you hate for yourself…"
+];
+let sel=-1;
+
+function pick(i){
+  sel=i;
+  document.querySelectorAll('.qcard').forEach((c,j)=>c.classList.toggle('sel',j===i));
+  document.getElementById('btnS1').disabled=false;
+}
+
+function onRefl(){
+  const v=document.getElementById('reflIn').value.length;
+  document.getElementById('cc').textContent=v;
+  document.getElementById('btnS2').disabled=(v<5);
+}
+
+function goStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('step'+i).classList.toggle('show',i===n);
+    const dot=document.getElementById('dot'+i);
+    dot.className='sdot'+(i<n?' done':i===n?' active':'');
+    document.getElementById('lbl'+i).className='slabel'+(i===n?' active':'');
+  });
+  if(n===2){
+    document.getElementById('dispQuote').textContent='\u201C'+QUOTES[sel]+'\u201D';
+    onRefl();
+  }
+  if(n===3) buildCard();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildCard(){
+  const name=document.getElementById('nameIn').value.trim();
+  const refl=document.getElementById('reflIn').value.trim();
+  const q='\u201C'+QUOTES[sel]+'\u201D';
+
+  // preview
+  document.getElementById('cardQuote').textContent=q;
+  document.getElementById('cardName').textContent=name ? name+':' : '';
+  document.getElementById('cardRefl').textContent=refl;
+
+  // print
+  document.getElementById('pQuote').textContent=q;
+  document.getElementById('pName').textContent=name ? name+':' : '';
+  document.getElementById('pRefl').textContent=refl;
+}
+
+function printCard(){
+  document.getElementById('printArea').style.display='block';
+  window.print();
+  setTimeout(()=>document.getElementById('printArea').style.display='none',1200);
+}
+
+function restart(){
+  sel=-1;
+  document.querySelectorAll('.qcard').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('btnS1').disabled=true;
+  document.getElementById('nameIn').value='';
+  document.getElementById('reflIn').value='';
+  document.getElementById('cc').textContent='0';
+  goStep(1);
+}
+</script>
+</body>
+</html>
