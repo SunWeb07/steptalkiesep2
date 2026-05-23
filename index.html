@@ -176,36 +176,8 @@ body{font-family:var(--sans);color:var(--text);min-height:100vh;
 .status{text-align:center;font-size:13px;color:var(--gold-dark);min-height:18px;margin-top:6px;font-weight:600}
 .print-hint{text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
 
-/* ── PRINT ── */
-@media print{
-  body>*{display:none!important}
-  #printArea{display:block!important}
-  @page{size:A5 landscape;margin:8mm}
-}
-#printArea{display:none}
-.p-card{
-  width:100%;height:100vh;
-  border-radius:6mm;border:1px solid #d4b86a;
-  position:relative;overflow:hidden;
-  background:#fdf8f0;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:8mm 12mm;
-}
-.p-card::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 55% 38% at 38% 52%,rgba(245,195,165,.38) 0%,transparent 65%),
-    radial-gradient(ellipse 40% 32% at 68% 58%,rgba(240,205,130,.28) 0%,transparent 65%),
-    radial-gradient(ellipse 48% 34% at 18% 42%,rgba(185,218,195,.26) 0%,transparent 65%);
-}
-.p-rose{position:absolute;top:0;left:0;width:28mm;z-index:2}
-.p-leaves{position:absolute;bottom:0;right:0;width:22mm;z-index:2}
-.p-attr{position:absolute;top:5mm;right:6mm;font-family:Georgia,serif;font-size:8pt;color:#4a3a20;text-align:right;z-index:2;line-height:1.35}
-.p-quote{font-family:Georgia,serif;font-style:italic;font-size:14pt;line-height:1.55;text-align:center;color:#1a1209;position:relative;z-index:2;max-width:88%;margin-bottom:0}
-.p-divider{width:40%;height:1pt;background:rgba(200,150,10,.5);margin:4mm 0 3mm;position:relative;z-index:2}
-.p-refl-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#8B6914;margin-bottom:1.5mm;position:relative;z-index:2}
-.p-refl-text{font-family:Georgia,serif;font-style:italic;font-size:11pt;line-height:1.55;text-align:center;color:#3a2e1a;position:relative;z-index:2;max-width:85%}
+/* ── IMAGE DOWNLOAD ── */
+.btn-img-loading{opacity:.7;cursor:wait!important}
 </style>
 </head>
 <body>
@@ -335,45 +307,16 @@ body{font-family:var(--sans);color:var(--text);min-height:100vh;
     </div>
 
     <div class="dl-row">
-      <button class="btn btn-primary" onclick="printCard()">🖨 Save / Print as PDF</button>
+      <button class="btn btn-primary" id="btnDownload" onclick="downloadImage()">📥 Download as Image</button>
     </div>
-    <p class="print-hint">In print dialog → <strong>Save as PDF</strong> → uncheck "Headers &amp; footers"</p>
     <div class="status" id="statusMsg"></div>
     <button class="btn-ghost" onclick="restart()">Start again for a new card</button>
   </div>
 
 </div>
 
-<!-- PRINT AREA -->
-<div id="printArea">
-  <div class="p-card">
-    <div class="p-rose">
-      <svg viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" width="100%">
-        <g transform="translate(52,62)">
-          <ellipse cx="26" cy="2" rx="8" ry="20" fill="#7a6840" opacity=".52" transform="rotate(-28)"/>
-          <ellipse cx="-24" cy="5" rx="7" ry="18" fill="#7a6840" opacity=".48" transform="rotate(18)"/>
-          <ellipse cx="0" cy="-33" rx="19" ry="39" fill="#eaaa1a" opacity=".82"/>
-          <ellipse cx="31" cy="-10" rx="19" ry="39" fill="#dfa020" opacity=".76" transform="rotate(72)"/>
-          <ellipse cx="19" cy="29" rx="19" ry="39" fill="#eaaa1a" opacity=".72" transform="rotate(144)"/>
-          <ellipse cx="-19" cy="29" rx="19" ry="39" fill="#d49818" opacity=".76" transform="rotate(216)"/>
-          <ellipse cx="-31" cy="-10" rx="19" ry="39" fill="#e2aa22" opacity=".79" transform="rotate(288)"/>
-          <circle cx="0" cy="0" r="10" fill="#b8820a"/>
-        </g>
-      </svg>
-    </div>
-    <div class="p-leaves">
-      <svg viewBox="0 0 90 100" xmlns="http://www.w3.org/2000/svg" width="100%">
-        <ellipse cx="30" cy="68" rx="11" ry="33" fill="#8B7355" opacity=".54" transform="rotate(-14,30,68)"/>
-        <ellipse cx="54" cy="54" rx="10" ry="27" fill="#8B7355" opacity=".47" transform="rotate(11,54,54)"/>
-      </svg>
-    </div>
-    <div class="p-attr">Imam Ali's letter to<br>Hazrat Hasan</div>
-    <p class="p-quote" id="pQuote"></p>
-    <div class="p-divider"></div>
-    <div class="p-refl-name" id="pName"></div>
-    <p class="p-refl-text" id="pRefl"></p>
-  </div>
-</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 const QUOTES=[
@@ -421,16 +364,49 @@ function buildCard(){
   document.getElementById('cardName').textContent=name ? name+':' : '';
   document.getElementById('cardRefl').textContent=refl;
 
-  // print
-  document.getElementById('pQuote').textContent=q;
-  document.getElementById('pName').textContent=name ? name+':' : '';
-  document.getElementById('pRefl').textContent=refl;
+
 }
 
-function printCard(){
-  document.getElementById('printArea').style.display='block';
-  window.print();
-  setTimeout(()=>document.getElementById('printArea').style.display='none',1200);
+async function downloadImage(){
+  const btn = document.getElementById('btnDownload');
+  const status = document.getElementById('statusMsg');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating image…';
+  btn.classList.add('btn-img-loading');
+  status.textContent = '';
+
+  try {
+    const card = document.getElementById('theCard');
+    const scale = 3; // high-res: 3× pixel density
+
+    const canvas = await html2canvas(card, {
+      scale: scale,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#fdf8f0',
+      logging: false,
+      width: card.offsetWidth,
+      height: card.offsetHeight,
+      scrollX: 0,
+      scrollY: 0
+    });
+
+    // Trigger download
+    const link = document.createElement('a');
+    const name = document.getElementById('nameIn').value.trim() || 'my';
+    link.download = 'imam-ali-card-' + name.toLowerCase().replace(/\s+/g,'-') + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    status.textContent = '✅ Image saved!';
+  } catch(e) {
+    status.textContent = '⚠️ Could not generate image. Try again.';
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📥 Download as Image';
+    btn.classList.remove('btn-img-loading');
+  }
 }
 
 function restart(){
